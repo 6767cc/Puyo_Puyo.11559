@@ -3,11 +3,13 @@
 using namespace std;
 
 int i, j, xx, yy, pc, ans = 0;
-char map[12][6];
-bool ch[12][6];
+char map[13][7];
+bool ch[13][7];
 
 int dx[] = {1, 0, -1, 0};
 int dy[] = {0, 1, 0, -1};
+
+int t = 0, p = 0, q = 0;
 
 //아래가 비어있는데 바로 위가 뿌요라면 아래를 뿌요로 바꾸고 위를 비움 
 void fall()
@@ -20,8 +22,9 @@ void fall()
 
           for(int l = 10; l >= 0; l--)
             {
-              if(map[l][r] != '.' && map[l+1][r] == '.')
-              {
+              if(map[l][r] == '.' || map[l+1][r] != '.') continue;
+              else 
+            {
                 map[l+1][r] = map[l][r];
                 map[l][r] = '.';
                 np = false;
@@ -39,13 +42,17 @@ void del()
   {
     for(int w = 0; w < 6; w++)
     {
-      if(ch[v][w]) map[v][w] = '.';
+      if(ch[v][w]) 
+      {
+        map[v][w] = '.';
+        ch[v][w] = false;
+      }
     } 
   }
 }
 
 //뿌요가 걸리면 dfs로 갯수 찾으면서 ch배열에 같은 위치를 체크
-void dfs(int a, int b, char col)
+void dfs(int a, int b, char color)
 {
   ch[a][b] = true;
   
@@ -54,14 +61,13 @@ void dfs(int a, int b, char col)
       xx = a + dx[c];
       yy = b + dy[c];
 
-      if(xx >= 0 && yy >= 0 && xx < 12 && yy < 6)
-        {
-          if(map[xx][yy] == col)
-          {
-            pc++;
-            dfs(xx, yy, col);
-          }
-        }
+      if(xx < 0 || yy < 0 || xx >= 12 || yy >= 6) continue;
+      if(map[xx][yy] != color || !ch[xx][yy]) continue;
+      else
+      {
+        pc++;
+        dfs(xx, yy, color);
+      }
     }
 }
 
@@ -81,6 +87,8 @@ int main()
   //뿌요 탐색
   while(1)
   {
+    cout << ch[11][0] << endl;
+    
     bool NP = true;
 
     for(i = 11; i >= 0; i--)
@@ -98,6 +106,7 @@ int main()
               del();
               NP = false;
             }
+            else continue;
           }
         }
       }
@@ -105,11 +114,9 @@ int main()
       if(NP) break; // 정상완료되면 종료
       fall();
       ans++;
-    
-  for(i = 0; i < 12; i++)
-    for(j = 0; j < 6; j++) 
-      ch[i][j] = false;
   }
   
-  cout << ans;
+  cout << ans << endl << t << endl << p << endl << q << endl;
+  
+  cout << map[11][0] << ch[11][0] << map[10][2];
 }
